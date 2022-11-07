@@ -2,6 +2,10 @@
 
 namespace USP\Core;
 
+use ReflectionAttribute;
+use ReflectionException;
+use USP\Core\Attributes\AttributesService;
+use USP\Core\Attributes\Column;
 use USP\Core\Database\RequestBuilder;
 use USP\Core\Database\DatabaseTable;
 use USP\Core\Database\Where;
@@ -9,19 +13,39 @@ use USP\Core\Database\Where;
 abstract class Repository {
 
 	protected RequestBuilder $requestBuilder;
+	private AttributesService $attributesService;
+	private array $columnPropertyMap;
 
 	abstract public function getEntity(): string;
 
 	abstract public function getTableName(): string;
 
+	/**
+	 * @throws ReflectionException
+	 */
 	public function __construct( ?string $as = null ) {
 
-		$colsNames = Entity::_getColNames( $this->getEntity() );
+		$this->attributesService = new AttributesService();
+		$columnAttributes = $this->attributesService->getClassProperties($this->getEntity(), Column::class);
+
+		$this->columnPropertyMap = [];
+		foreach($columnAttributes as $property => $attribute){
+			$this->columnPropertyMap[$attribute->getArguments()['name']] = $property;
+		}
+
+		$columnNames = [];
+		/**
+		 * @var string $property
+		 * @var  ReflectionAttribute $attribute
+		 */
+		foreach($columnAttributes as $property => $attribute){
+			$columnNames[] = $attribute->getArguments()['name'];
+		}
 
 		$table = ( new DatabaseTable() )
 			->setAs( $as )
 			->setName( $this->getTableName() )
-			->setCols( $colsNames );
+			->setCols( $columnNames );
 
 		$this->requestBuilder = new RequestBuilder( $table );
 	}
@@ -30,7 +54,7 @@ abstract class Repository {
 		return $this->requestBuilder;
 	}
 
-	public function find( int $id ): ?Entity {
+	public function find( int $id ): ?EntityAbstract {
 		$table = $this->requestBuilder->getTable();
 
 		return $this->findOneBy( [
@@ -38,7 +62,7 @@ abstract class Repository {
 		] );
 	}
 
-	public function findOneBy( array $conditions ): ?Entity {
+	public function findOneBy( array $conditions ): ?EntityAbstract {
 
 		$query = $this->requestBuilder;
 		foreach ( $conditions as $condition ) {
@@ -75,19 +99,27 @@ abstract class Repository {
 		return $data;
 	}
 
-	private function fillEntity( object $data ): Entity {
+	private function fillEntity( object $data ): EntityAbstract {
 
 		$entityClass = $this->getEntity();
 
-		/** @var Entity $entity */
+		/** @var EntityAbstract $entity */
 		$entity = new $entityClass();
 
 		foreach ( $data as $colName => $value ) {
-			$camelCaseColName = str_replace( '_', '', ucwords( $colName, '_' ) );
-			$methodName       = 'set' . $camelCaseColName;
-			if ( method_exists( $entity, $methodName ) ) {
-				$entity->$methodName( $value );
+
+			if(!isset($this->columnPropertyMap[$colName])){
+				$entity->addExtraData($colName, $value);
+			}else{
+
+				$propertyName = $this->columnPropertyMap[$colName];
+
+				$methodName       = 'set' . ucfirst($propertyName);
+				if ( method_exists( $entity, $methodName ) ) {
+					$entity->$methodName( $value );
+				}
 			}
+
 		}
 
 		EntityManager::getInstance()->add( $entity );

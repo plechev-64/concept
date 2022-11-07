@@ -2,11 +2,16 @@
 
 namespace USP\Core;
 
+use ReflectionException;
+use USP\Core\Attributes\AttributesService;
+use USP\Core\Attributes\Entity;
 use USP\Core\Database\Where;
 
 class EntityManager {
 
 	private array $entities = [];
+	private array $attributes = [];
+	private AttributesService $attributesService;
 
 	/**
 	 * @return array
@@ -22,6 +27,8 @@ class EntityManager {
 			$instance = new self();
 		}
 
+		$instance->attributesService = new AttributesService();
+
 		return $instance;
 	}
 
@@ -35,21 +42,45 @@ class EntityManager {
 		$hasInstance = true;
 	}
 
-	public function add( Entity $entity ): void {
+	public function add( EntityAbstract $entity ): void {
 		$this->entities[ $this->getEntityHash( $entity ) ] = $entity;
 	}
 
+	/**
+	 * @throws ReflectionException
+	 */
+	private function getRepository(EntityAbstract $entity):?Repository{
+		$attribute = $this->attributesService->getClassAttribute($entity::class, Entity::class);
+
+		if(!$attribute){
+			return null;
+		}
+
+		$classRepo = $attribute->getArguments()['repository']?? null;
+
+		if(!$classRepo){
+			return null;
+		}
+
+		return new $classRepo();
+	}
+
+	/**
+	 * @throws ReflectionException
+	 */
 	public function save(): void {
 		if ( ! $this->entities ) {
 			return;
 		}
 
-		/** @var Entity $entity */
+		/** @var EntityAbstract $entity */
 		foreach ( $this->entities as $entityHash => $entity ) {
-			$classRepo = $entity->getRepository();
 
-			/** @var Repository $repository */
-			$repository = new $classRepo();
+			$repository = $this->getRepository($entity);
+
+			if(!$repository){
+				continue;
+			}
 
 			$request = $repository->getRequestBuilder();
 
@@ -66,11 +97,11 @@ class EntityManager {
 
 	}
 
-	private function getEntityHash( Entity $entity ): string {
+	private function getEntityHash( EntityAbstract $entity ): string {
 		return md5( serialize( $entity ) );
 	}
 
-	private function getDataFromEntity( Entity $entity ): array {
+	private function getDataFromEntity( EntityAbstract $entity ): array {
 
 		$data = [];
 		foreach ( get_class_methods( $entity ) as $methodName ) {

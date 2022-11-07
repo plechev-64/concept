@@ -2,30 +2,58 @@
 
 namespace USP\Init\Entity;
 
-use USP\Core\Entity;
+use USP\Core\Attributes\Entity;
+use USP\Core\Attributes\Column;
+use USP\Core\EntityAbstract;
 use USP\Init\Repository\PostsRepository;
 
-class Post extends Entity {
+#[Entity(repository:"USP\Init\Repository\PostsRepository")]
+class Post extends EntityAbstract {
 
+	#[Column(name:"ID", primary:true)]
 	private ?int $id = null;
-	private int $postAuthor;
-	private string $postStatus;
-	private string $postType;
-	private ?string $postDate = null;
-	private ?string $postModified = null;
-	private string $postTitle;
-	private string $postContent;
-	private ?string $postExcerpt = null;
-	private ?int $postParent = null;
-	private ?string $postName = null;
-	private ?string $postMimeType = null;
-	private ?string $guid = null;
-	private ?int $commentCount = null;
-	private ?string $commentStatus = null;
 
-	public function getRepository(): string {
-		return PostsRepository::class;
-	}
+	#[Column(name:"post_author")]
+	private int $postAuthor;
+
+	#[Column(name:"post_status")]
+	private string $postStatus;
+
+	#[Column(name:"post_type")]
+	private string $postType;
+
+	#[Column(name:"post_date")]
+	private ?string $postDate = null;
+
+	#[Column(name:"post_modified")]
+	private ?string $postModified = null;
+
+	#[Column(name:"post_title")]
+	private string $postTitle;
+
+	#[Column(name:"post_content")]
+	private string $postContent;
+
+	#[Column(name:"post_excerpt")]
+	private ?string $postExcerpt = null;
+
+	#[Column(name:"post_parent")]
+	private ?int $postParent = null;
+
+	#[Column(name:"post_name")]
+	private ?string $postName = null;
+
+	#[Column(name:"post_mime_type")]
+	private ?string $postMimeType = null;
+
+	#[Column(name:"guid")]
+	private ?string $guid = null;
+
+	#[Column(name:"comment_count")]
+	private ?int $commentCount = null;
+
+	#[Column(name:"comment_status")]
+	private ?string $commentStatus = null;
 
 	/**
 	 * @return int|null

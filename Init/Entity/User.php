@@ -3,10 +3,10 @@
 namespace USP\Init\Entity;
 
 use DateTime;
-use USP\Core\Entity;
+use USP\Core\EntityAbstract;
 use USP\Init\Repository\UsersRepository;
 
-class User extends Entity {
+class User extends EntityAbstract {
 
 	public int $id;
 	public string $userLogin;
@@ -14,10 +14,6 @@ class User extends Entity {
 	public string $displayName;
 	public string $userNicename;
 	public string $userRegistered;
-
-	public function getRepository(): string {
-		return UsersRepository::class;
-	}
 
 	/**
 	 * @return int
