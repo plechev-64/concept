@@ -32,16 +32,6 @@ class EntityManager {
 		return $instance;
 	}
 
-	private function __construct() {
-		static $hasInstance = false;
-
-		if ( $hasInstance ) {
-			return;
-		}
-
-		$hasInstance = true;
-	}
-
 	public function add( EntityAbstract $entity ): void {
 		$this->entities[ $this->getEntityHash( $entity ) ] = $entity;
 	}
@@ -49,16 +39,16 @@ class EntityManager {
 	/**
 	 * @throws ReflectionException
 	 */
-	private function getRepository(EntityAbstract $entity):?RepositoryAbstract{
-		$attribute = $this->attributesService->getClassAttribute($entity::class, Entity::class);
+	private function getRepository( EntityAbstract $entity ): ?RepositoryAbstract {
+		$attribute = $this->attributesService->getClassAttribute( $entity::class, Entity::class );
 
-		if(!$attribute){
+		if ( ! $attribute ) {
 			return null;
 		}
 
-		$classRepo = $attribute->getArguments()['repository']?? null;
+		$classRepo = $attribute->getArguments()['repository'] ?? null;
 
-		if(!$classRepo){
+		if ( ! $classRepo ) {
 			return null;
 		}
 
@@ -76,9 +66,9 @@ class EntityManager {
 		/** @var EntityAbstract $entity */
 		foreach ( $this->entities as $entityHash => $entity ) {
 
-			$repository = $this->getRepository($entity);
+			$repository = $this->getRepository( $entity );
 
-			if(!$repository){
+			if ( ! $repository ) {
 				continue;
 			}
 
