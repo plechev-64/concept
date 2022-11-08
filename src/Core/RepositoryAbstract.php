@@ -5,13 +5,13 @@ namespace USP\Core;
 use ReflectionException;
 use USP\Core\Attributes\AttributesService;
 use USP\Core\Attributes\Column;
-use USP\Core\Database\RequestBuilder;
+use USP\Core\Database\QueryBuilder;
 use USP\Core\Database\DatabaseTable;
 use USP\Core\Database\Where;
 
 abstract class RepositoryAbstract {
 
-	protected RequestBuilder $requestBuilder;
+	protected QueryBuilder $requestBuilder;
 	private AttributesService $attributesService;
 	private array $columnPropertyMap;
 
@@ -43,10 +43,10 @@ abstract class RepositoryAbstract {
 			->setName( $this->getTableName() )
 			->setCols( $columnNames );
 
-		$this->requestBuilder = new RequestBuilder( $table );
+		$this->requestBuilder = new QueryBuilder( $table );
 	}
 
-	public function getRequestBuilder(): RequestBuilder {
+	public function getRequestBuilder(): QueryBuilder {
 		return $this->requestBuilder;
 	}
 

@@ -2,7 +2,7 @@
 
 namespace USP\Core\Database;
 
-class RequestBuilder {
+class QueryBuilder {
 
 	const METHOD_GET_RESULTS = 'get_results';
 	const METHOD_GET_ROW = 'get_row';
@@ -24,13 +24,13 @@ class RequestBuilder {
 		return $this->table;
 	}
 
-	public function select( ?array $selectCols ): RequestBuilder {
+	public function select( ?array $selectCols ): QueryBuilder {
 		$this->queryObject->setSelect( $selectCols );
 
 		return $this;
 	}
 
-	public function addWhere( string $colName, string $operator, mixed $value ): RequestBuilder {
+	public function addWhere( string $colName, string $operator, mixed $value ): QueryBuilder {
 		$this->queryObject->addWhere(
 			( new Where() )
 				->setColName( $colName )
@@ -57,33 +57,33 @@ class RequestBuilder {
 		return $sqlBuilder->buildSql( $action );
 	}
 
-	public function limit( int $number, int $offset = 0 ): RequestBuilder {
+	public function limit( int $number, int $offset = 0 ): QueryBuilder {
 		$this->number( $number );
 		$this->offset( $offset );
 
 		return $this;
 	}
 
-	public function number( int $number ): RequestBuilder {
+	public function number( int $number ): QueryBuilder {
 		$this->queryObject->setNumber( $number );
 
 		return $this;
 	}
 
-	public function offset( int $offset ): RequestBuilder {
+	public function offset( int $offset ): QueryBuilder {
 		$this->queryObject->setOffset( $offset );
 
 		return $this;
 	}
 
-	public function groupBy( array $groupBy ): RequestBuilder {
+	public function groupBy( array $groupBy ): QueryBuilder {
 
 		$this->queryObject->setGroupBy( $groupBy );
 
 		return $this;
 	}
 
-	public function orderBy( array $orderBy ): RequestBuilder {
+	public function orderBy( array $orderBy ): QueryBuilder {
 
 		$this->queryObject->setOrderBy( $orderBy );
 
