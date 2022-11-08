@@ -82,7 +82,7 @@ class EntityManager {
 				continue;
 			}
 
-			$request = $repository->getRequestBuilder();
+			$request = $repository->getQueryBuilder();
 
 			if ( ! $entity->getId() ) {
 				$request->insert( $this->getDataFromEntity( $entity ) );

@@ -49,7 +49,9 @@ class QueryBuilder {
 	}
 
 	/**
-	 * @param   string|null  $action
+	 * @param string|null $action
+	 *
+	 * @return string
 	 */
 	public function getSql( ?string $action ): string {
 		$sqlBuilder = new SqlBuilder( $this->table, $this->queryObject );

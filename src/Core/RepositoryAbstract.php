@@ -11,7 +11,7 @@ use USP\Core\Database\Where;
 
 abstract class RepositoryAbstract {
 
-	protected QueryBuilder $requestBuilder;
+	protected QueryBuilder $queryBuilder;
 	private AttributesService $attributesService;
 	private array $columnPropertyMap;
 
@@ -43,15 +43,15 @@ abstract class RepositoryAbstract {
 			->setName( $this->getTableName() )
 			->setCols( $columnNames );
 
-		$this->requestBuilder = new QueryBuilder( $table );
+		$this->queryBuilder = new QueryBuilder( $table );
 	}
 
-	public function getRequestBuilder(): QueryBuilder {
-		return $this->requestBuilder;
+	public function getQueryBuilder(): QueryBuilder {
+		return $this->queryBuilder;
 	}
 
 	public function find( int $id ): ?EntityAbstract {
-		$table = $this->requestBuilder->getTable();
+		$table = $this->queryBuilder->getTable();
 
 		return $this->findOneBy( [
 			[ $table->getCols()[0], Where::OPERATOR_EQUAL, $id ]
@@ -60,7 +60,7 @@ abstract class RepositoryAbstract {
 
 	public function findOneBy( array $conditions ): ?EntityAbstract {
 
-		$query = $this->requestBuilder;
+		$query = $this->queryBuilder;
 		foreach ( $conditions as $condition ) {
 			$query->addWhere( $condition[0], $condition[1], $condition[2] );
 		}
@@ -76,7 +76,7 @@ abstract class RepositoryAbstract {
 	}
 
 	public function findAllBy( array $conditions ): ?array {
-		$query = $this->requestBuilder;
+		$query = $this->queryBuilder;
 		foreach ( $conditions as $condition ) {
 			$query->addWhere( $condition[0], $condition[1], $condition[2] );
 		}
