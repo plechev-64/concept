@@ -2,6 +2,8 @@
 
 namespace USP\Core\Database;
 
+use wpdb;
+
 class QueryBuilder {
 
 	const METHOD_GET_RESULTS = 'get_results';
@@ -11,13 +13,17 @@ class QueryBuilder {
 
 	private DatabaseTable $table;
 	private ?QueryObject $queryObject;
+	private wpdb $db;
 
 	/**
-	 * @param   DatabaseTable  $table
+	 * @param DatabaseTable $table
 	 */
 	public function __construct( DatabaseTable $table ) {
+		global $wpdb;
+
 		$this->table       = $table;
 		$this->queryObject = new QueryObject();
+		$this->db          = $wpdb;
 	}
 
 	public function getTable(): DatabaseTable {
@@ -93,11 +99,10 @@ class QueryBuilder {
 	}
 
 	private function getData( string $method ): mixed {
-		global $wpdb;
 
 		$sql = $this->getSql( SqlBuilder::ACTION_GET );
 
-		$data = $wpdb->$method( $sql );
+		$data = $this->db->$method( $sql );
 
 		$data = $this->maybeUnserialize( $data );
 
@@ -153,21 +158,18 @@ class QueryBuilder {
 	}
 
 	public function insert( $data ) {
-		global $wpdb;
 
-		return $wpdb->insert( $this->table->getName(), $data );
+		return $this->db->insert( $this->table->getName(), $data );
 	}
 
 	public function update( array $colNameValues ) {
-		global $wpdb;
 		$this->queryObject->setNeedUpdate( $colNameValues );
 
-		return $wpdb->query( $this->getSql( SqlBuilder::ACTION_UPDATE ) );
+		return $this->db->query( $this->getSql( SqlBuilder::ACTION_UPDATE ) );
 	}
 
 	public function delete() {
-		global $wpdb;
 
-		return $wpdb->query( $this->getSql( SqlBuilder::ACTION_DELETE ) );
+		return $this->db->query( $this->getSql( SqlBuilder::ACTION_DELETE ) );
 	}
 }
