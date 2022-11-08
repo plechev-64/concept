@@ -2,7 +2,6 @@
 
 namespace USP\Core;
 
-use ReflectionAttribute;
 use ReflectionException;
 use USP\Core\Attributes\AttributesService;
 use USP\Core\Attributes\Column;
@@ -10,7 +9,7 @@ use USP\Core\Database\RequestBuilder;
 use USP\Core\Database\DatabaseTable;
 use USP\Core\Database\Where;
 
-abstract class Repository {
+abstract class RepositoryAbstract {
 
 	protected RequestBuilder $requestBuilder;
 	private AttributesService $attributesService;
@@ -34,10 +33,7 @@ abstract class Repository {
 		}
 
 		$columnNames = [];
-		/**
-		 * @var string $property
-		 * @var  ReflectionAttribute $attribute
-		 */
+
 		foreach($columnAttributes as $property => $attribute){
 			$columnNames[] = $attribute->getArguments()['name'];
 		}

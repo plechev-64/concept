@@ -2,10 +2,10 @@
 
 namespace USP\Init\Repository;
 
-use USP\Core\Repository;
+use USP\Core\RepositoryAbstract;
 use USP\Init\Entity\Post;
 
-class PostsRepository extends Repository {
+class PostsRepository extends RepositoryAbstract {
 
 	public function getEntity(): string {
 		return Post::class;

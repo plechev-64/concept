@@ -49,7 +49,7 @@ class EntityManager {
 	/**
 	 * @throws ReflectionException
 	 */
-	private function getRepository(EntityAbstract $entity):?Repository{
+	private function getRepository(EntityAbstract $entity):?RepositoryAbstract{
 		$attribute = $this->attributesService->getClassAttribute($entity::class, Entity::class);
 
 		if(!$attribute){

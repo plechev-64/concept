@@ -5,11 +5,14 @@ namespace USP\Core\Attributes;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionProperty;
 
 class AttributesService {
 
 	/**
+	 * @param string $className
+	 * @param string $attributeName
+	 *
+	 * @return ReflectionAttribute|null
 	 * @throws ReflectionException
 	 */
 	public function getClassAttribute(string $className, string $attributeName): ?ReflectionAttribute {
@@ -23,6 +26,10 @@ class AttributesService {
 	}
 
 	/**
+	 * @param string $className
+	 * @param string $attributeName
+	 *
+	 * @return ReflectionAttribute[]
 	 * @throws ReflectionException
 	 */
 	public function getClassProperties(string $className, string $attributeName): array {

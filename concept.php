@@ -15,24 +15,7 @@ use USP\Core\EntityManager;
 use USP\Init\Entity\Post;
 use USP\Init\Repository\PostsRepository;
 
-require_once 'Core/Attributes/AttributesService.php';
-require_once 'Core/Attributes/Entity.php';
-require_once 'Core/Attributes/Column.php';
-
-require_once 'Core/EntityAbstract.php';
-require_once 'Core/Repository.php';
-require_once 'Core/EntityManager.php';
-require_once 'Core/Database/QueryObject.php';
-require_once 'Core/Database/DatabaseTable.php';
-require_once 'Core/Database/RequestBuilder.php';
-require_once 'Core/Database/SqlBuilder.php';
-require_once 'Core/Database/Where.php';
-require_once 'Init/Entity/User.php';
-require_once 'Init/Entity/Post.php';
-require_once 'Init/Repository/UsersRepository.php';
-require_once 'Init/Repository/PostsRepository.php';
-
-
+require_once 'vendor/autoload.php';
 
 if (!function_exists('str_starts_with')) {
 	function str_starts_with( $haystack, $needle ): bool {
@@ -41,7 +24,7 @@ if (!function_exists('str_starts_with')) {
 }
 
 ///** @var Post $post */
-$post = ( new PostsRepository() )->find(1);
+$post = ( new PostsRepository() )->findOneBy([['ID', '>', 0]]);
 print_r([$post]);
 //
 //$post
@@ -96,4 +79,3 @@ print_r([$post]);
 //	];
 //}, $attributes));
 //print_r([$classReflection->getDocComment()]);
-exit;

@@ -2,10 +2,10 @@
 
 namespace USP\Init\Repository;
 
-use USP\Core\Repository;
+use USP\Core\RepositoryAbstract;
 use USP\Init\Entity\User;
 
-class UsersRepository extends Repository {
+class UsersRepository extends RepositoryAbstract {
 
 	public function getEntity(): string {
 		return User::class;
