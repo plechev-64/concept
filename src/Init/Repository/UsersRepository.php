@@ -5,6 +5,11 @@ namespace USP\Init\Repository;
 use USP\Core\RepositoryAbstract;
 use USP\Init\Entity\User;
 
+/**
+ * @method User findOneBy( array $conditions )
+ * @method User find( int $id )
+ * @method User[] findAllBy( array $conditions )
+ */
 class UsersRepository extends RepositoryAbstract {
 
 	public function getEntity(): string {
