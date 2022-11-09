@@ -11,21 +11,47 @@ License: A "Slug" license name e.g. GPL2
 */
 
 use USP\Core\Attributes\Entity;
+use USP\Core\Container\Container;
 use USP\Core\EntityManager;
 use USP\Init\Entity\Post;
 use USP\Init\Repository\PostsRepository;
 
 require_once 'vendor/autoload.php';
 
-if (!function_exists('str_starts_with')) {
+if ( ! function_exists( 'str_starts_with' ) ) {
 	function str_starts_with( $haystack, $needle ): bool {
 		return (string) $needle !== '' && strncmp( $haystack, $needle, strlen( $needle ) ) === 0;
 	}
 }
 
+function print_pre( $data ) {
+	echo '<pre>';
+	print_r( $data );
+	echo '</pre>';
+}
+
 ///** @var Post $post */
-$post = ( new PostsRepository() )->findOneBy([['ID', '>', 0]]);
-print_r([$post]);
+//$post = ( new PostsRepository() )->findOneBy([['ID', '>', 0]]);
+//print_r([$post]);
+
+$container = Container::getInstance();
+
+$postsRepository = $container->get( PostsRepository::class );
+
+$container->set( 'myCustomId', function ( Container $container ) {
+	/*
+	 * $customClass = new Class();
+	 * $customClass->setA(1);
+	 * $customClass->setB($container->get( PostsRepository::class ));
+	 *
+	 * return $customClass;
+	 */
+	echo 'call my custom builder';
+} );
+
+$container->get('myCustomId');
+
+
 //
 //$post
 //	->setPostTitle('Залоговок2')

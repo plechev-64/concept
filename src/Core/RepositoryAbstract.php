@@ -22,9 +22,9 @@ abstract class RepositoryAbstract {
 	/**
 	 * @throws ReflectionException
 	 */
-	public function __construct() {
+	public function __construct( AttributesService $attributesService ) {
 
-		$this->attributesService = new AttributesService();
+		$this->attributesService = $attributesService;
 		$columnAttributes        = $this->attributesService->getClassProperties( $this->getEntity(), Column::class );
 
 		$this->columnPropertyMap = [];
@@ -40,13 +40,13 @@ abstract class RepositoryAbstract {
 	}
 
 	/**
-	 * @todo Возвращает QueryBuilder для текущего репозитория
-	 * @todo таким образом можно будет получать QueryBuilder
-	 * @todo из других репозиториев для join'а
-	 *
 	 * @param string|null $as
 	 *
 	 * @return QueryBuilder
+	 * @todo из других репозиториев для join'а
+	 *
+	 * @todo Возвращает QueryBuilder для текущего репозитория
+	 * @todo таким образом можно будет получать QueryBuilder
 	 */
 	public function createQueryBuilder( ?string $as = null ): QueryBuilder {
 

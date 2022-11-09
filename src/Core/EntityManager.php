@@ -32,6 +32,9 @@ class EntityManager {
 		return $instance;
 	}
 
+	private function __construct() {
+	}
+
 	public function add( EntityAbstract $entity ): void {
 		$this->entities[ $this->getEntityHash( $entity ) ] = $entity;
 	}

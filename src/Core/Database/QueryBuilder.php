@@ -13,17 +13,14 @@ class QueryBuilder {
 
 	private DatabaseTable $table;
 	private ?QueryObject $queryObject;
-	private wpdb $db;
 
 	/**
 	 * @param DatabaseTable $table
 	 */
 	public function __construct( DatabaseTable $table ) {
-		global $wpdb;
 
 		$this->table       = $table;
 		$this->queryObject = new QueryObject();
-		$this->db          = $wpdb;
 	}
 
 	public function getTable(): DatabaseTable {
@@ -102,7 +99,7 @@ class QueryBuilder {
 
 		$sql = $this->getSql( SqlBuilder::ACTION_GET );
 
-		$data = $this->db->$method( $sql );
+		$data = $this->db()->$method( $sql );
 
 		$data = $this->maybeUnserialize( $data );
 
@@ -157,19 +154,26 @@ class QueryBuilder {
 		return $this->getData( self::METHOD_GET_COL );
 	}
 
-	public function insert( $data ) {
+	public function insert( $data ): bool|int {
 
-		return $this->db->insert( $this->table->getName(), $data );
+		return $this->db()->insert( $this->table->getName(), $data );
 	}
 
-	public function update( array $colNameValues ) {
+	public function update( array $colNameValues ): bool|int {
 		$this->queryObject->setNeedUpdate( $colNameValues );
 
-		return $this->db->query( $this->getSql( SqlBuilder::ACTION_UPDATE ) );
+		return $this->db()->query( $this->getSql( SqlBuilder::ACTION_UPDATE ) );
 	}
 
-	public function delete() {
+	public function delete(): bool|int {
 
-		return $this->db->query( $this->getSql( SqlBuilder::ACTION_DELETE ) );
+		return $this->db()->query( $this->getSql( SqlBuilder::ACTION_DELETE ) );
+	}
+
+	//@todo пока убрал wpdb из переменной т.к. засирает дебаг
+	private function db(): wpdb {
+		global $wpdb;
+
+		return $wpdb;
 	}
 }
