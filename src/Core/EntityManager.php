@@ -21,20 +21,12 @@ class EntityManager {
 		return $this->entities;
 	}
 
-	public static function getInstance() {
-		static $instance;
-
-		if ( null === $instance ) {
-			$instance = new self();
-		}
-
-		$instance->attributesService = new AttributesService();
-		$instance->container         = Container::getInstance();
-
-		return $instance;
-	}
-
-	private function __construct() {
+	public function __construct(
+		Container $container,
+		AttributesService $attributesService
+	) {
+		$this->attributesService = $attributesService;
+		$this->container         = $container;
 	}
 
 	public function add( EntityAbstract $entity ): void {
@@ -92,27 +84,18 @@ class EntityManager {
 
 	private function getDataFromEntity( EntityAbstract $entity ): array {
 
+		$columnPropertyMap = $this->attributesService->getColumnPropertyMap( $entity::class );
+
 		$data = [];
-		foreach ( get_class_methods( $entity ) as $methodName ) {
+		foreach ( $columnPropertyMap as $colName => $propertyName ) {
 
-			if ( ! \str_starts_with( $methodName, 'set' ) ) {
-				continue;
-			}
-
-			$clearMethodName = str_replace( 'set', '', $methodName );
-
-			$getterName = 'get' . $clearMethodName;
+			$getterName = 'get' . ucfirst( $propertyName );
 
 			if ( ! method_exists( $entity, $getterName ) ) {
 				continue;
 			}
 
-			$colsName = strtolower( preg_replace( [
-				'/([a-z\d])([A-Z])/',
-				'/([^_])([A-Z][a-z])/'
-			], '$1_$2', $clearMethodName ) );
-
-			$data[ $colsName ] = $entity->$getterName();
+			$data[ $colName ] = $entity->$getterName();
 
 		}
 

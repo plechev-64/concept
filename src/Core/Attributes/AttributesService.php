@@ -28,13 +28,17 @@ class AttributesService {
 	/**
 	 * @param   string  $className
 	 * @param   string  $attributeName
-	 *
-	 * @return ReflectionAttribute[]
-	 * @throws ReflectionException
 	 */
-	public function getClassProperties( string $className, string $attributeName ): array {
-		$classReflection = new ReflectionClass( $className );
-		$properties      = $classReflection->getProperties();
+	public function getClassProperties( string $className, string $attributeName ): ?array {
+
+		try {
+			$classReflection = new ReflectionClass( $className );
+		}
+		catch ( ReflectionException $e ) {
+			return null;
+		}
+
+		$properties = $classReflection->getProperties();
 
 		$result = [];
 		foreach ( $properties as $property ) {
@@ -49,6 +53,22 @@ class AttributesService {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @param   string  $entityClassName
+	 */
+	public function getColumnPropertyMap( string $entityClassName ): array {
+
+		$columnAttributes = $this->getClassProperties( $entityClassName, Column::class );
+
+		$columnPropertyMap = [];
+		foreach ( $columnAttributes as $property => $attribute ) {
+			$columnPropertyMap[ $attribute->getArguments()['name'] ] = $property;
+		}
+
+		return $columnPropertyMap;
+
 	}
 
 }

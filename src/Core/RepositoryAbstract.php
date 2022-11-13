@@ -13,45 +13,30 @@ abstract class RepositoryAbstract {
 
 	private AttributesService $attributesService;
 	private EntityManager $entityManager;
-	private array $columnPropertyMap;
 
-	abstract public function getEntity(): string;
+	abstract public function getEntityClassName(): string;
 
 	abstract public function getTableName(): string;
 
-	/**
-	 * @throws ReflectionException
-	 */
 	public function __construct(
 		AttributesService $attributesService,
 		EntityManager $entityManager
 	) {
-
 		$this->entityManager     = $entityManager;
 		$this->attributesService = $attributesService;
-		$columnAttributes        = $this->attributesService->getClassProperties( $this->getEntity(), Column::class );
-
-		$this->columnPropertyMap = [];
-		foreach ( $columnAttributes as $property => $attribute ) {
-			$this->columnPropertyMap[ $attribute->getArguments()['name'] ] = $property;
-		}
 	}
 
 	/**
 	 * @param   string|null  $as
 	 *
 	 * @return QueryBuilder
-	 * @todo из других репозиториев для join'а
-	 *
-	 * @todo Возвращает QueryBuilder для текущего репозитория
-	 * @todo таким образом можно будет получать QueryBuilder
 	 */
 	public function createQueryBuilder( ?string $as = null ): QueryBuilder {
 
 		$table = ( new DatabaseTable() )
 			->setAs( $as )
 			->setName( $this->getTableName() )
-			->setCols( array_keys( $this->columnPropertyMap ) );
+			->setCols( array_keys( $this->attributesService->getColumnPropertyMap( $this->getEntityClassName() ) ) );
 
 		return new QueryBuilder( $table );
 	}
@@ -112,18 +97,19 @@ abstract class RepositoryAbstract {
 
 	protected function fillEntity( object $data ): EntityAbstract {
 
-		$entityClass = $this->getEntity();
+		$entityClass       = $this->getEntity();
+		$columnPropertyMap = $this->attributesService->getColumnPropertyMap( $this->getEntityClassName() );
 
 		/** @var EntityAbstract $entity */
 		$entity = new $entityClass();
 
 		foreach ( $data as $colName => $value ) {
 
-			if ( ! isset( $this->columnPropertyMap[ $colName ] ) ) {
+			if ( ! isset( $columnPropertyMap[ $colName ] ) ) {
 				$entity->addExtraData( $colName, $value );
 			} else {
 
-				$propertyName = $this->columnPropertyMap[ $colName ];
+				$propertyName = $columnPropertyMap[ $colName ];
 
 				$methodName = 'set' . ucfirst( $propertyName );
 				if ( method_exists( $entity, $methodName ) ) {
