@@ -7,52 +7,52 @@ use USP\Core\Attributes\Column;
 use USP\Core\EntityAbstract;
 use USP\Init\Repository\PostsRepository;
 
-#[Entity(repository:"USP\Init\Repository\PostsRepository")]
+#[Entity( repository: "USP\Init\Repository\PostsRepository" )]
 class Post extends EntityAbstract {
 
-	#[Column(name:"ID", primary:true)]
+	#[Column( name: "ID", primary: true )]
 	private ?int $id = null;
 
-	#[Column(name:"post_author")]
+	#[Column( name: "post_author" )]
 	private int $postAuthor;
 
-	#[Column(name:"post_status")]
+	#[Column( name: "post_status" )]
 	private string $postStatus;
 
-	#[Column(name:"post_type")]
+	#[Column( name: "post_type" )]
 	private string $postType;
 
-	#[Column(name:"post_date")]
+	#[Column( name: "post_date" )]
 	private ?string $postDate = null;
 
-	#[Column(name:"post_modified")]
+	#[Column( name: "post_modified" )]
 	private ?string $postModified = null;
 
-	#[Column(name:"post_title")]
+	#[Column( name: "post_title" )]
 	private string $postTitle;
 
-	#[Column(name:"post_content")]
+	#[Column( name: "post_content" )]
 	private string $postContent;
 
-	#[Column(name:"post_excerpt")]
+	#[Column( name: "post_excerpt" )]
 	private ?string $postExcerpt = null;
 
-	#[Column(name:"post_parent")]
+	#[Column( name: "post_parent" )]
 	private ?int $postParent = null;
 
-	#[Column(name:"post_name")]
+	#[Column( name: "post_name" )]
 	private ?string $postName = null;
 
-	#[Column(name:"post_mime_type")]
+	#[Column( name: "post_mime_type" )]
 	private ?string $postMimeType = null;
 
-	#[Column(name:"guid")]
+	#[Column( name: "guid" )]
 	private ?string $guid = null;
 
-	#[Column(name:"comment_count")]
+	#[Column( name: "comment_count" )]
 	private ?int $commentCount = null;
 
-	#[Column(name:"comment_status")]
+	#[Column( name: "comment_status" )]
 	private ?string $commentStatus = null;
 
 	/**

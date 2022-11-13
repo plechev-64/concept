@@ -15,7 +15,7 @@ class QueryBuilder {
 	private ?QueryObject $queryObject;
 
 	/**
-	 * @param DatabaseTable $table
+	 * @param   DatabaseTable  $table
 	 */
 	public function __construct( DatabaseTable $table ) {
 
@@ -28,20 +28,53 @@ class QueryBuilder {
 	}
 
 	public function select( ?array $selectCols ): QueryBuilder {
+
+		$as = $this->getTable()->getAs();
+		foreach ( $selectCols as &$selectCol ) {
+			$selectCol = $as . '.' . $selectCol;
+		}
+
 		$this->queryObject->setSelect( $selectCols );
 
 		return $this;
 	}
 
 	public function addWhere( string $colName, string $operator, mixed $value ): QueryBuilder {
+
 		$this->queryObject->addWhere(
 			( new Where() )
-				->setColName( $colName )
+				->setColName( $this->getTable()->getAs() . '.' . $colName )
 				->setOperator( $operator )
 				->setValue( $value )
 		);
 
 		return $this;
+	}
+
+	protected function commonJoin( string $typeJoin, string $leftCol, string $onCondition, string $rightCol, QueryBuilder $queryBuilder ): QueryBuilder {
+
+		$this->queryObject->addJoin(
+			( new Join() )
+				->setType( $typeJoin )
+				->setLeftCol( $this->getTable()->getAs() . '.' . $leftCol )
+				->setRightCol( $queryBuilder->getTable()->getAs() . '.' . $rightCol )
+				->setOnCondition( $onCondition )
+				->setQueryBuilder( $queryBuilder )
+		);
+
+		return $this;
+	}
+
+	public function join( array $onCondition, QueryBuilder $queryBuilder ): QueryBuilder {
+		return $this->commonJoin( Join::TYPE_INNER, $onCondition[0], $onCondition[1], $onCondition[2], $queryBuilder );
+	}
+
+	public function leftJoin( array $onCondition, QueryBuilder $queryBuilder ): QueryBuilder {
+		return $this->commonJoin( Join::TYPE_LEFT, $onCondition[0], $onCondition[1], $onCondition[2], $queryBuilder );
+	}
+
+	public function rightJoin( array $onCondition, QueryBuilder $queryBuilder ): QueryBuilder {
+		return $this->commonJoin( Join::TYPE_RIGHT, $onCondition[0], $onCondition[1], $onCondition[2], $queryBuilder );
 	}
 
 	/**
@@ -52,7 +85,7 @@ class QueryBuilder {
 	}
 
 	/**
-	 * @param string|null $action
+	 * @param   string|null  $action
 	 *
 	 * @return string
 	 */

@@ -12,9 +12,9 @@ class QueryObject {
 		self::ORDER_DESC
 	];
 
-	private ?array $select = null;
-	private ?array $where = null;
-	private ?array $join = null;
+	private array $select = [];
+	private array $where = [];
+	private ?array $join = [];
 	private ?int $number = null;
 	private ?int $offset = null;
 	private ?array $orderBy = null;
@@ -42,6 +42,17 @@ class QueryObject {
 	 */
 	public function setSelect( ?array $select ): QueryObject {
 		$this->select = $select;
+
+		return $this;
+	}
+
+	/**
+	 * @param   string  $select
+	 *
+	 * @return QueryObject
+	 */
+	public function addSelect( string $select ): QueryObject {
+		$this->select[] = $select;
 
 		return $this;
 	}
@@ -84,6 +95,12 @@ class QueryObject {
 	 */
 	public function setJoin( ?array $join ): QueryObject {
 		$this->join = $join;
+
+		return $this;
+	}
+
+	public function addJoin( Join $join ): QueryObject {
+		$this->join[] = $join;
 
 		return $this;
 	}

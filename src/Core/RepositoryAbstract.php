@@ -11,8 +11,8 @@ use USP\Core\Database\Where;
 
 abstract class RepositoryAbstract {
 
-	protected QueryBuilder $queryBuilder;
 	private AttributesService $attributesService;
+	private EntityManager $entityManager;
 	private array $columnPropertyMap;
 
 	abstract public function getEntity(): string;
@@ -22,8 +22,12 @@ abstract class RepositoryAbstract {
 	/**
 	 * @throws ReflectionException
 	 */
-	public function __construct( AttributesService $attributesService ) {
+	public function __construct(
+		AttributesService $attributesService,
+		EntityManager $entityManager
+	) {
 
+		$this->entityManager     = $entityManager;
 		$this->attributesService = $attributesService;
 		$columnAttributes        = $this->attributesService->getClassProperties( $this->getEntity(), Column::class );
 
@@ -31,16 +35,10 @@ abstract class RepositoryAbstract {
 		foreach ( $columnAttributes as $property => $attribute ) {
 			$this->columnPropertyMap[ $attribute->getArguments()['name'] ] = $property;
 		}
-
-		$this->queryBuilder = $this->createQueryBuilder();
-	}
-
-	public function getQueryBuilder(): QueryBuilder {
-		return $this->queryBuilder;
 	}
 
 	/**
-	 * @param string|null $as
+	 * @param   string|null  $as
 	 *
 	 * @return QueryBuilder
 	 * @todo из других репозиториев для join'а
@@ -59,7 +57,7 @@ abstract class RepositoryAbstract {
 	}
 
 	public function find( int $id ): ?EntityAbstract {
-		$table = $this->queryBuilder->getTable();
+		$table = $this->createQueryBuilder()->getTable();
 
 		return $this->findOneBy( [
 			[ $table->getCols()[0], Where::OPERATOR_EQUAL, $id ]
@@ -68,7 +66,7 @@ abstract class RepositoryAbstract {
 
 	public function findOneBy( array $conditions ): ?EntityAbstract {
 
-		$query = $this->queryBuilder;
+		$query = $this->createQueryBuilder();
 		foreach ( $conditions as $condition ) {
 			$query->addWhere( $condition[0], $condition[1], $condition[2] );
 		}
@@ -84,7 +82,7 @@ abstract class RepositoryAbstract {
 	}
 
 	public function findAllBy( array $conditions ): ?array {
-		$query = $this->queryBuilder;
+		$query = $this->createQueryBuilder();
 		foreach ( $conditions as $condition ) {
 			$query->addWhere( $condition[0], $condition[1], $condition[2] );
 		}
@@ -103,7 +101,16 @@ abstract class RepositoryAbstract {
 		return $data;
 	}
 
-	private function fillEntity( object $data ): EntityAbstract {
+	protected function fillEntities( array $entitiesData ): array {
+		$data = [];
+		foreach ( $entitiesData as $entityData ) {
+			$data[] = $this->fillEntity( $entityData );
+		}
+
+		return $data;
+	}
+
+	protected function fillEntity( object $data ): EntityAbstract {
 
 		$entityClass = $this->getEntity();
 
@@ -126,9 +133,16 @@ abstract class RepositoryAbstract {
 
 		}
 
-		EntityManager::getInstance()->add( $entity );
+		$this->entityManager->add( $entity );
 
 		return $entity;
+	}
+
+	/**
+	 * @return EntityManager
+	 */
+	public function getEntityManager(): EntityManager {
+		return $this->entityManager;
 	}
 
 }

@@ -3,16 +3,30 @@
 namespace USP\Init\Entity;
 
 use DateTime;
+use USP\Core\Attributes\Column;
+use USP\Core\Attributes\Entity;
 use USP\Core\EntityAbstract;
 use USP\Init\Repository\UsersRepository;
 
+#[Entity( repository: "USP\Init\Repository\UsersRepository" )]
 class User extends EntityAbstract {
 
+	#[Column( name: "ID", primary: true )]
 	public int $id;
+
+	#[Column( name: "user_login" )]
 	public string $userLogin;
+
+	#[Column( name: "user_email" )]
 	public string $userEmail;
+
+	#[Column( name: "display_name" )]
 	public string $displayName;
+
+	#[Column( name: "user_nicename" )]
 	public string $userNicename;
+
+	#[Column( name: "user_registered" )]
 	public string $userRegistered;
 
 	/**

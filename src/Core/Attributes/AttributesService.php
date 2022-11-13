@@ -9,16 +9,16 @@ use ReflectionException;
 class AttributesService {
 
 	/**
-	 * @param string $className
-	 * @param string $attributeName
+	 * @param   string  $className
+	 * @param   string  $attributeName
 	 *
 	 * @return ReflectionAttribute|null
 	 * @throws ReflectionException
 	 */
-	public function getClassAttribute(string $className, string $attributeName): ?ReflectionAttribute {
-		$classReflection = new ReflectionClass($className);
-		$attributes = $classReflection->getAttributes($attributeName);
-		if(!isset($attributes[0])){
+	public function getClassAttribute( string $className, string $attributeName ): ?ReflectionAttribute {
+		$classReflection = new ReflectionClass( $className );
+		$attributes      = $classReflection->getAttributes( $attributeName );
+		if ( ! isset( $attributes[0] ) ) {
 			return null;
 		}
 
@@ -26,25 +26,25 @@ class AttributesService {
 	}
 
 	/**
-	 * @param string $className
-	 * @param string $attributeName
+	 * @param   string  $className
+	 * @param   string  $attributeName
 	 *
 	 * @return ReflectionAttribute[]
 	 * @throws ReflectionException
 	 */
-	public function getClassProperties(string $className, string $attributeName): array {
-		$classReflection = new ReflectionClass($className);
-		$properties = $classReflection->getProperties();
+	public function getClassProperties( string $className, string $attributeName ): array {
+		$classReflection = new ReflectionClass( $className );
+		$properties      = $classReflection->getProperties();
 
 		$result = [];
-		foreach($properties as $property){
-			$attributes = $property->getAttributes($attributeName);
+		foreach ( $properties as $property ) {
+			$attributes = $property->getAttributes( $attributeName );
 
-			if(!$attributes){
+			if ( ! $attributes ) {
 				continue;
 			}
 
-			$result[$property->getName()] = $attributes[0];
+			$result[ $property->getName() ] = $attributes[0];
 
 		}
 

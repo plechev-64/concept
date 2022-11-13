@@ -27,8 +27,8 @@ abstract class EntityAbstract {
 		return $this;
 	}
 
-	public function addExtraData(string $key, mixed $value): EntityAbstract{
-		$this->extraData[$key] = $value;
+	public function addExtraData( string $key, mixed $value ): EntityAbstract {
+		$this->extraData[ $key ] = $value;
 
 		return $this;
 	}

@@ -5,13 +5,14 @@ namespace USP\Core;
 use ReflectionException;
 use USP\Core\Attributes\AttributesService;
 use USP\Core\Attributes\Entity;
+use USP\Core\Container\Container;
 use USP\Core\Database\Where;
 
 class EntityManager {
 
 	private array $entities = [];
-	private array $attributes = [];
 	private AttributesService $attributesService;
+	private Container $container;
 
 	/**
 	 * @return array
@@ -28,6 +29,7 @@ class EntityManager {
 		}
 
 		$instance->attributesService = new AttributesService();
+		$instance->container         = Container::getInstance();
 
 		return $instance;
 	}
@@ -39,28 +41,22 @@ class EntityManager {
 		$this->entities[ $this->getEntityHash( $entity ) ] = $entity;
 	}
 
-	/**
-	 * @throws ReflectionException
-	 */
-	private function getRepository( EntityAbstract $entity ): ?RepositoryAbstract {
-		$attribute = $this->attributesService->getClassAttribute( $entity::class, Entity::class );
+	public function getRepository( string $entityClass ): ?RepositoryAbstract {
 
-		if ( ! $attribute ) {
+		try {
+			$attribute = $this->attributesService->getClassAttribute( $entityClass, Entity::class );
+		}
+		catch ( ReflectionException $e ) {
 			return null;
 		}
 
-		$classRepo = $attribute->getArguments()['repository'] ?? null;
-
-		if ( ! $classRepo ) {
+		if ( ! $attribute || ! $classRepo = $attribute->getArguments()['repository'] ?? null ) {
 			return null;
 		}
 
-		return new $classRepo();
+		return $this->container->get( $classRepo );
 	}
 
-	/**
-	 * @throws ReflectionException
-	 */
 	public function save(): void {
 		if ( ! $this->entities ) {
 			return;
@@ -69,13 +65,13 @@ class EntityManager {
 		/** @var EntityAbstract $entity */
 		foreach ( $this->entities as $entityHash => $entity ) {
 
-			$repository = $this->getRepository( $entity );
+			$repository = $this->getRepository( $entity::class );
 
 			if ( ! $repository ) {
 				continue;
 			}
 
-			$request = $repository->getQueryBuilder();
+			$request = $repository->createQueryBuilder();
 
 			if ( ! $entity->getId() ) {
 				$request->insert( $this->getDataFromEntity( $entity ) );
@@ -122,4 +118,6 @@ class EntityManager {
 
 		return $data;
 	}
+
+
 }
