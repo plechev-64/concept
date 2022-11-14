@@ -82,7 +82,7 @@ class QueryObject {
 	}
 
 	/**
-	 * @return array|null
+	 * @return Join[]|null
 	 */
 	public function getJoin(): ?array {
 		return $this->join;

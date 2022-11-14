@@ -15,7 +15,7 @@ class QueryBuilder {
 	private ?QueryObject $queryObject;
 
 	/**
-	 * @param   DatabaseTable  $table
+	 * @param DatabaseTable $table
 	 */
 	public function __construct( DatabaseTable $table ) {
 
@@ -64,7 +64,6 @@ class QueryBuilder {
 
 		return $this;
 	}
-
 	public function join( array $onCondition, QueryBuilder $queryBuilder ): QueryBuilder {
 		return $this->commonJoin( Join::TYPE_INNER, $onCondition[0], $onCondition[1], $onCondition[2], $queryBuilder );
 	}
@@ -85,7 +84,7 @@ class QueryBuilder {
 	}
 
 	/**
-	 * @param   string|null  $action
+	 * @param string|null $action
 	 *
 	 * @return string
 	 */

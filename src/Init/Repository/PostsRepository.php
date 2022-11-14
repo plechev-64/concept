@@ -15,7 +15,7 @@ use USP\Init\Entity\User;
  */
 class PostsRepository extends RepositoryAbstract {
 
-	public function getEntity(): string {
+	public function getEntityClassName(): string {
 		return Post::class;
 	}
 

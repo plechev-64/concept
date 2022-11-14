@@ -12,7 +12,7 @@ use USP\Init\Entity\User;
  */
 class UsersRepository extends RepositoryAbstract {
 
-	public function getEntity(): string {
+	public function getEntityClassName(): string {
 		return User::class;
 	}
 

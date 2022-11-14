@@ -97,7 +97,7 @@ abstract class RepositoryAbstract {
 
 	protected function fillEntity( object $data ): EntityAbstract {
 
-		$entityClass       = $this->getEntity();
+		$entityClass       = $this->getEntityClassName();
 		$columnPropertyMap = $this->attributesService->getColumnPropertyMap( $this->getEntityClassName() );
 
 		/** @var EntityAbstract $entity */
