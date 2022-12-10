@@ -69,8 +69,9 @@ class EntityManager {
 				$request->insert( $this->getDataFromEntity( $entity ) );
 			} else {
 				if ( $entityHash !== $this->getEntityHash( $entity ) ) {
+					$colNames = array_values($request->getTable()->getCols());
 					$request
-						->addWhere( $request->getTable()->getCols()[0], Where::OPERATOR_EQUAL, $entity->getId() )
+						->addWhere( array_shift($colNames), Where::OPERATOR_EQUAL, $entity->getId() )
 						->update( $this->getDataFromEntity( $entity ) );
 				}
 			}
@@ -87,7 +88,7 @@ class EntityManager {
 		$columnPropertyMap = $this->attributesService->getColumnPropertyMap( $entity::class );
 
 		$data = [];
-		foreach ( $columnPropertyMap as $colName => $propertyName ) {
+		foreach ( $columnPropertyMap as $propertyName => $attributes ) {
 
 			$getterName = 'get' . ucfirst( $propertyName );
 
@@ -95,7 +96,7 @@ class EntityManager {
 				continue;
 			}
 
-			$data[ $colName ] = $entity->$getterName();
+			$data[ $attributes['name'] ] = $entity->$getterName();
 
 		}
 

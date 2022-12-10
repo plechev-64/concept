@@ -10,10 +10,12 @@ Author URI: http://URI_Of_The_Plugin_Author
 License: A "Slug" license name e.g. GPL2
 */
 
+use USP\Core\Collections\ArrayCollection;
 use USP\Core\Container\Container;
 use USP\Core\Database\Join;
 use USP\Core\Database\Paginator;
 use USP\Core\Database\Where;
+use USP\Init\Entity\Post;
 use USP\Init\Repository\PostsRepository;
 use USP\Init\Repository\UsersRepository;
 
@@ -31,53 +33,53 @@ function print_pre( $data ) {
 	echo '</pre>';
 }
 
-///** @var Post $post */
-//$post = ( new PostsRepository() )->findOneBy([['ID', '>', 0]]);
-//print_r([$post]);
-
 $container = Container::getInstance();
-
 /** @var PostsRepository $postsRepository */
 $postsRepository = $container->get( PostsRepository::class );
-/** @var UsersRepository $usersRepository */
-$usersRepository = $container->get( UsersRepository::class );
+/** @var ArrayCollection<Post> $posts */
+$posts = $postsRepository->find(1);
+print_pre($posts);
 
-$usersQueryBuilder = $usersRepository->createQueryBuilder( 'u' );
 
-$userNicenameFilter = sanitize_text_field( $_GET['user_nicename'] ?? 'admin' );
-$page               = absint( $_GET['usp_page'] ?? 1 );
-
-/**
- * Проблемы:
- * 1. В $postsRepository есть метод getPostsByUserNicename, он возвращает результат, по этому приходится дублировать
- * запрос. Хотя может и не проблема это
- * 2. Paginator работает с QueryBuilder, а он ничего не знает о repository и не может заполнить Entity
- * по этому возвращает просто объект с данными, может это так и должно быть, а может нет
- * 3. Подсчет кол-ва всех записей в Paginator пока не сделан нормально, подумаю как корректно сделать
- */
-$postsQueryBuilder = $postsRepository->createQueryBuilder( 'p' )
-                                     ->select( [
-	                                     'ID',
-	                                     'post_title',
-	                                     'post_name',
-                                     ] )
-                                     ->join(
-	                                     [ 'post_author', Join::ON_EQUAL, 'ID' ],
-	                                     $usersQueryBuilder
-		                                     ->select( [ 'user_nicename' ] )
-		                                     ->addWhere( 'user_nicename', Where::OPERATOR_EQUAL, $userNicenameFilter )
-                                     );
-
-$paginator = new Paginator( $postsQueryBuilder, 3 );
-
-$paginator->paginate( $page );
-
-print_pre( [
-	'count'      => count( $paginator ),
-	'curPage'    => $paginator->getCurrentPage(),
-	'totalPages' => $paginator->getLastPage(),
-	'nextPage'   => $paginator->getNextPage(),
-	'prevPage'   => $paginator->getPreviousPage(),
-	'data'       => $paginator->getResults()
-] );
+///** @var UsersRepository $usersRepository */
+//$usersRepository = $container->get( UsersRepository::class );
+//
+//$usersQueryBuilder = $usersRepository->createQueryBuilder( 'u' );
+//
+//$userNicenameFilter = sanitize_text_field( $_GET['user_nicename'] ?? 'admin' );
+//$page               = absint( $_GET['usp_page'] ?? 1 );
+//
+///**
+// * Проблемы:
+// * 1. В $postsRepository есть метод getPostsByUserNicename, он возвращает результат, по этому приходится дублировать
+// * запрос. Хотя может и не проблема это
+// * 2. Paginator работает с QueryBuilder, а он ничего не знает о repository и не может заполнить Entity
+// * по этому возвращает просто объект с данными, может это так и должно быть, а может нет
+// * 3. Подсчет кол-ва всех записей в Paginator пока не сделан нормально, подумаю как корректно сделать
+// */
+//$postsQueryBuilder = $postsRepository->createQueryBuilder( 'p' )
+//                                     ->select( [
+//	                                     'ID',
+//	                                     'post_title',
+//	                                     'post_name',
+//                                     ] )
+//                                     ->join(
+//	                                     [ 'post_author', Join::ON_EQUAL, 'ID' ],
+//	                                     $usersQueryBuilder
+//		                                     ->select( [ 'user_nicename' ] )
+//		                                     ->addWhere( 'user_nicename', Where::OPERATOR_EQUAL, $userNicenameFilter )
+//                                     );
+//
+//$paginator = new Paginator( $postsQueryBuilder, 3 );
+//
+//$paginator->paginate( $page );
+//
+//print_pre( [
+//	'count'      => count( $paginator ),
+//	'curPage'    => $paginator->getCurrentPage(),
+//	'totalPages' => $paginator->getLastPage(),
+//	'nextPage'   => $paginator->getNextPage(),
+//	'prevPage'   => $paginator->getPreviousPage(),
+//	'data'       => $paginator->getResults()
+//] );
 

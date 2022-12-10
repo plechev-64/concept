@@ -64,7 +64,7 @@ class AttributesService {
 
 		$columnPropertyMap = [];
 		foreach ( $columnAttributes as $property => $attribute ) {
-			$columnPropertyMap[ $attribute->getArguments()['name'] ] = $property;
+			$columnPropertyMap[ $property ] = $attribute->getArguments();
 		}
 
 		return $columnPropertyMap;

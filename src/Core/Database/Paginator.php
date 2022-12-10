@@ -3,13 +3,14 @@
 namespace USP\Core\Database;
 
 use Countable;
+use USP\Core\Collections\ArrayCollection;
 
 class Paginator implements Countable {
 	private const PAGE_SIZE = 10;
 	private QueryBuilder $queryBuilder;
 	private int $currentPage;
 	private int $pageSize;
-	private array $results;
+	private ArrayCollection $results;
 	private int $numResults;
 
 	public function __construct( QueryBuilder $queryBuilder, int $pageSize = self::PAGE_SIZE ) {
@@ -19,6 +20,7 @@ class Paginator implements Countable {
 		 */
 		$this->queryBuilder = $queryBuilder;
 		$this->pageSize     = $pageSize;
+		$this->results = new ArrayCollection();
 	}
 
 	public function paginate( int $page = 1 ): self {
@@ -82,7 +84,7 @@ class Paginator implements Countable {
 		return $this->numResults;
 	}
 
-	public function getResults(): array {
+	public function getResults(): ArrayCollection {
 		return $this->results;
 	}
 

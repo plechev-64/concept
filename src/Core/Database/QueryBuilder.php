@@ -22,21 +22,25 @@ class QueryBuilder {
 
 		$this->table       = $table;
 		$this->queryObject = new QueryObject();
+		$this->select($this->table->getCols());
 	}
 
 	public function getTable(): DatabaseTable {
 		return $this->table;
 	}
 
-	public function select( ?array $selectCols ): QueryBuilder {
-
+	private function normalizeSelectArray(array $selectCols): array
+	{
 		$as = $this->getTable()->getAs();
 		foreach ( $selectCols as &$selectCol ) {
 			$selectCol = $as . '.' . $selectCol;
 		}
 
-		$this->queryObject->setSelect( $selectCols );
+		return $selectCols;
+	}
 
+	public function select( ?array $selectCols ): QueryBuilder {
+		$this->queryObject->setSelect( $this->normalizeSelectArray($selectCols) );
 		return $this;
 	}
 
@@ -181,7 +185,7 @@ class QueryBuilder {
 		return $this->getData( self::METHOD_GET_VAR );
 	}
 
-	public function getResults(): ?array {
+	public function getResults(): ?ArrayCollection {
 		return $this->getData( self::METHOD_GET_RESULTS );
 	}
 
@@ -189,7 +193,7 @@ class QueryBuilder {
 		return $this->getData( self::METHOD_GET_ROW );
 	}
 
-	public function getCol(): ?array {
+	public function getCol(): ?ArrayCollection {
 		return $this->getData( self::METHOD_GET_COL );
 	}
 

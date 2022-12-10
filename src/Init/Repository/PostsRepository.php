@@ -2,6 +2,7 @@
 
 namespace USP\Init\Repository;
 
+use USP\Core\Collections\ArrayCollection;
 use USP\Core\Database\Join;
 use USP\Core\Database\Where;
 use USP\Core\RepositoryAbstract;
@@ -25,21 +26,21 @@ class PostsRepository extends RepositoryAbstract {
 		return $wpdb->posts;
 	}
 
-	public function getPostsByUserNicename( string $userNicename ): ?array {
+	public function getPostsByUserNicename( string $userNicename ): ?ArrayCollection {
 
 		$usersQueryBuilder = $this->getEntityManager()->getRepository( User::class )
 		                          ->createQueryBuilder( 'u' );
 
 		$posts = $this->createQueryBuilder( 'p' )
-		              ->select( [
-			              'ID',
-			              'post_title',
-			              'post_name',
-		              ] )
+//		              ->select( [
+//			              'ID',
+//			              'post_title',
+//			              'post_name',
+//		              ] )
 		              ->join(
 			              [ 'post_author', Join::ON_EQUAL, 'ID' ],
 			              $usersQueryBuilder
-				              ->select( [ 'user_nicename' ] )
+				              //->select( [ 'user_nicename' ] )
 				              ->addWhere( 'user_nicename', Where::OPERATOR_EQUAL, $userNicename )
 		              )->getResults();
 
@@ -47,7 +48,7 @@ class PostsRepository extends RepositoryAbstract {
 			return null;
 		}
 
-		return $this->fillEntities( $posts );
+		return $this->fillEntities( $posts, $this->getEntityClassName() );
 
 	}
 

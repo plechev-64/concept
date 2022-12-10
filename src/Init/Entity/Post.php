@@ -4,6 +4,7 @@ namespace USP\Init\Entity;
 
 use USP\Core\Attributes\Entity;
 use USP\Core\Attributes\Column;
+use USP\Core\Collections\ArrayCollection;
 use USP\Core\EntityAbstract;
 use USP\Init\Repository\PostsRepository;
 
@@ -13,8 +14,8 @@ class Post extends EntityAbstract {
 	#[Column( name: "ID", primary: true )]
 	private ?int $id = null;
 
-	#[Column( name: "post_author" )]
-	private int $postAuthor;
+	#[Column( name: "post_author", entityClass: User::class )]
+	private User $postAuthor;
 
 	#[Column( name: "post_status" )]
 	private string $postStatus;
@@ -74,18 +75,18 @@ class Post extends EntityAbstract {
 	}
 
 	/**
-	 * @return int
+	 * @return User
 	 */
-	public function getPostAuthor(): int {
+	public function getPostAuthor(): User {
 		return $this->postAuthor;
 	}
 
 	/**
-	 * @param   int  $postAuthor
+	 * @param   User  $postAuthor
 	 *
 	 * @return Post
 	 */
-	public function setPostAuthor( int $postAuthor ): Post {
+	public function setPostAuthor( User $postAuthor ): Post {
 		$this->postAuthor = $postAuthor;
 
 		return $this;

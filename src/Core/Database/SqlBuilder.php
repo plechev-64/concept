@@ -119,7 +119,8 @@ class SqlBuilder {
 			$orderBy = implode( ",", $orders );
 
 		} else {
-			$orderBy = $this->table->getAs() . "." . $this->table->getCols()[0] . " " . $this->queryObject->getOrder();
+			$colNames = array_values($this->table->getCols());
+			$orderBy = $this->table->getAs() . "." . array_shift($colNames) . " " . $this->queryObject->getOrder();
 		}
 
 		$sql[] = "ORDER BY " . $orderBy;
