@@ -12,17 +12,21 @@ class SqlBuilder {
 	private QueryObject $queryObject;
 
 	/**
-	 * @param   DatabaseTable  $table
-	 * @param   QueryObject    $queryObject
+	 * @param DatabaseTable $table
+	 * @param QueryObject $queryObject
 	 */
 	public function __construct( DatabaseTable $table, QueryObject $queryObject ) {
 		$this->table = $table;
 		$this->rebuildQueryObject( $queryObject );
 	}
 
+	//@todo не совсем врубился почему надо пересоздавать QueryObject
 	public function rebuildQueryObject( QueryObject $queryObject ): QueryObject {
 
 		$this->queryObject = new QueryObject();
+
+		$this->queryObject->setNumber( $queryObject->getNumber() );
+		$this->queryObject->setOffset( $queryObject->getOffset() );
 
 		$this->fillQueryObject( $queryObject );
 
