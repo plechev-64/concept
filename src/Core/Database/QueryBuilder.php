@@ -2,6 +2,7 @@
 
 namespace USP\Core\Database;
 
+use USP\Core\Collections\ArrayCollection;
 use wpdb;
 
 class QueryBuilder {
@@ -136,7 +137,13 @@ class QueryBuilder {
 
 		$data = $this->maybeUnserialize( $data );
 
-		return wp_unslash( $data );
+		$data = wp_unslash( $data );
+
+		if(is_array($data)){
+			$data = new ArrayCollection($data);
+		}
+
+		return $data;
 
 	}
 
