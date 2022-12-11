@@ -5,8 +5,11 @@ namespace USP\Core\Attributes;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
+use USP\Core\Collections\ArrayCollection;
 
 class AttributesService {
+
+	private array $entityColumnAttributes = [];
 
 	/**
 	 * @param   string  $className
@@ -60,12 +63,18 @@ class AttributesService {
 	 */
 	public function getColumnPropertyMap( string $entityClassName ): array {
 
+		if(!empty($this->entityColumnAttributes[$entityClassName])){
+			return $this->entityColumnAttributes[$entityClassName];
+		}
+
 		$columnAttributes = $this->getClassProperties( $entityClassName, Column::class );
 
 		$columnPropertyMap = [];
 		foreach ( $columnAttributes as $property => $attribute ) {
 			$columnPropertyMap[ $property ] = $attribute->getArguments();
 		}
+
+		$this->entityColumnAttributes[$entityClassName] = $columnPropertyMap;
 
 		return $columnPropertyMap;
 

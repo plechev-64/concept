@@ -48,8 +48,9 @@ class PostsRepository extends RepositoryAbstract {
 			return null;
 		}
 
-		return $this->fillEntities( $posts, $this->getEntityClassName() );
+		return $this->fillEntities( $posts );
 
 	}
+
 
 }

@@ -10,9 +10,9 @@ use USP\Core\EntityAbstract;
 	public ?string $entityClass = null;
 
 	/**
-	 * @param   string $name
-	 * @param   bool|false $primary
-	 * @param   EntityAbstract|null $entity
+	 * @param   string       $name
+	 * @param   bool|false   $primary
+	 * @param   string|null  $entityClass
 	 */
 	public function __construct( string $name, ?bool $primary = false, ?string $entityClass = null ) {
 		$this->name    = $name;

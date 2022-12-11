@@ -85,7 +85,7 @@ abstract class RepositoryAbstract {
 		return $this->fillEntities( $results );
 	}
 
-	protected function fillEntities( ArrayCollection $entitiesData ): ArrayCollection {
+	public function fillEntities( ArrayCollection $entitiesData ): ArrayCollection {
 
 		$this->fillColumnEntities( $entitiesData );
 
