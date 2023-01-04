@@ -1,8 +1,6 @@
 <?php
 
-namespace USP\Template;
-
-use TemplateInterface;
+namespace USP\Core\Template;
 
 class Template implements TemplateInterface {
 
@@ -39,7 +37,7 @@ class Template implements TemplateInterface {
 	 *
 	 * @return string|null
 	 */
-	public function getContent(?array $vars): ?string {
+	public function getContent(?array $vars = null): ?string {
 
 		ob_start();
 
@@ -55,7 +53,7 @@ class Template implements TemplateInterface {
 	/**
 	 * @param   array|null  $vars
 	 */
-	public function include(?array $vars): void {
+	public function include(?array $vars = null): void {
 
 		if ( ! empty( $vars ) && is_array( $vars ) ) {
 			extract( $vars );
@@ -67,8 +65,6 @@ class Template implements TemplateInterface {
 			return;
 		}
 
-		do_action( 'usp_include_template_before', $this->name, $path );
-
 		include $path;
 	}
 
@@ -77,7 +73,7 @@ class Template implements TemplateInterface {
 	 */
 	public function getPath(): ?string {
 
-		$path = $this->dir.DIRECTORY_SEPARATOR.$this->name.'php';
+		$path = $this->dir.DIRECTORY_SEPARATOR.$this->name.'.php';
 
 		if ( ! file_exists( $path ) ) {
 			return null;

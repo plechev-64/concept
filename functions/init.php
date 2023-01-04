@@ -1,5 +1,7 @@
 <?php
 
+require_once 'shortcodes.php';
+
 add_action('plugins_loaded', 'usp_load');
 function usp_load(){
 
