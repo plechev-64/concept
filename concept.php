@@ -21,6 +21,6 @@ require_once 'functions/init.php';
 
 add_action('wp', function(){
 
-	print_r(USP()->getTabsManager()->getTabs());
+//	print_r(USP()->getTabsManager()->getTabs());
 
 });

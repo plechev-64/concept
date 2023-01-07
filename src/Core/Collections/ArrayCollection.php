@@ -4,6 +4,7 @@ namespace USP\Core\Collections;
 
 use Closure;
 use ArrayIterator;
+use USP\Core\Collections\Expr\ClosureExpressionVisitor;
 
 class ArrayCollection implements Collection{
 
@@ -330,11 +331,33 @@ class ArrayCollection implements Collection{
 	/**
 	 * {@inheritDoc}
 	 */
-	public function matching()
+	public function matching(Criteria $criteria)
 	{
-		/**
-		 * @toDo реализовать выборку
-		 */
+		$expr     = $criteria->getWhereExpression();
+		$filtered = $this->elements;
+
+		if ($expr) {
+			$visitor  = new ClosureExpressionVisitor();
+			$filter   = $visitor->dispatch($expr);
+			$filtered = array_filter($filtered, $filter);
+		}
+
+		if ($orderings = $criteria->getOrderings()) {
+			foreach (array_reverse($orderings) as $field => $ordering) {
+				$next = ClosureExpressionVisitor::sortByField($field, $ordering == Criteria::DESC ? -1 : 1);
+			}
+
+			uasort($filtered, $next);
+		}
+
+		$offset = $criteria->getFirstResult();
+		$length = $criteria->getMaxResults();
+
+		if ($offset || $length) {
+			$filtered = array_slice($filtered, (int)$offset, $length);
+		}
+
+		return new static($filtered);
 	}
 
 }

@@ -10,7 +10,7 @@ abstract class AbstractTab implements TabInterface{
 	private bool $isPublic = false;
 	private bool $isHidden = false;
 	private ?int $counter = null;
-	private string $menuId = 'main';
+	private string $group = TabsManager::GROUP_MAIN;
 	private bool $isCustomTab = false;
 
 	/**
@@ -142,17 +142,17 @@ abstract class AbstractTab implements TabInterface{
 	/**
 	 * @return string
 	 */
-	public function getMenuId(): string {
-		return $this->menuId;
+	public function getGroup(): string {
+		return $this->group;
 	}
 
 	/**
-	 * @param   string  $menuId
+	 * @param   string  $group
 	 *
 	 * @return AbstractTab
 	 */
-	public function setMenuId( string $menuId ): AbstractTab {
-		$this->menuId = $menuId;
+	public function setGroup( string $group ): AbstractTab {
+		$this->group = $group;
 
 		return $this;
 	}

@@ -1,5 +1,14 @@
 <?php
 
+use USP\Core\Collections\ArrayCollection;
+use USP\Core\Tabs\TabsManager;
+use USP\Core\Template\Template;
+
+/**
+ * @var ArrayCollection $mainMenuButtons
+ * @var ArrayCollection $counterMenuButtons
+ * @var ArrayCollection $actionMenuButtons
+ */
 ?>
 <div id="usp-office-profile"
      class="usp-office-profile usps usps__column usps__nowrap usps__relative">
@@ -10,6 +19,7 @@
 		 *
 		 * @since   1.0.0
 		 */
+
 		do_action( 'usp_area_top' ); ?>
 	</div>
 	<div class="usp-office-card usps usps__nowrap usps__relative">
@@ -46,13 +56,23 @@
 
 			<div class="usp-office-middle usps usps__column usps__grow">
 				<div class="usp-office-bttn-act">
-					<?php // actions here ?>
+					<?php
+					echo (new Template('office-menu'))->getContent([
+						'menuId' => TabsManager::GROUP_ACTIONS,
+						'buttons' => $actionMenuButtons
+					]);
+					?>
 				</div>
 			</div>
 
 			<div class="usp-office-bottom">
 				<div class="usp-office-bttn-lite usps usps__jc-end">
-					<?php // counters here ?>
+					<?php
+					echo (new Template('office-menu'))->getContent([
+						'menuId' => TabsManager::GROUP_COUNTERS,
+						'buttons' => $counterMenuButtons
+					]);
+					?>
 				</div>
 			</div>
 		</div>
@@ -61,7 +81,10 @@
 
 <div id="usp-tabs" class="usp-tab-area usps usps__nowrap usps__relative">
 	<?php
-	// main menu tabs here
+	echo (new Template('office-menu'))->getContent([
+		'menuId' => TabsManager::GROUP_MAIN,
+        'buttons' => $mainMenuButtons
+	]);
 	?>
 	<div class="usp-profile-content usps usps__nowrap usps__grow">
 		<?php //content of tab here ?>
