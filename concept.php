@@ -19,3 +19,8 @@ define( 'USP_PATH', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 require_once 'vendor/autoload.php';
 require_once 'functions/init.php';
 
+add_action('wp', function(){
+
+	print_r(USP()->getTabsManager()->getTabs());
+
+});
